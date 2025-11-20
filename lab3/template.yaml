@@ -1,0 +1,32 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+
+Globals:
+  Function:
+    Runtime: python3.11
+    Timeout: 10
+    Handler: app.lambda_handler
+
+Resources:
+  HelloFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: src/
+      Runtime: python3.11
+      Environment:
+        Variables:
+          BUCKET_NAME: munaq-bucket
+          FILE_KEY: hello.txt
+      Policies:
+        - S3ReadPolicy:
+            BucketName: munaq-bucket
+      Events:
+        GetHello:
+          Type: Api
+          Properties:
+            Path: /hello
+            Method: get
+
+Outputs:
+  ApiUrl:
+    Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/hello"
